@@ -19,7 +19,7 @@ class WeatherService {
 //
 //    }
 
-    func currentConditions(forCity city: String, state: String? = nil, countryCode: String? = nil) -> AnyPublisher<OpenWeather.Condition, Error> {
+    func currentConditions(forCity city: String, state: String? = nil, countryCode: String? = nil) /* -> AnyPublisher<WeatherCondition, Error> */ {
 
         // endpoint from config
         // build APIRequest (or URLRequest)
@@ -30,20 +30,6 @@ class WeatherService {
         // or
 //        weatherClient.performRequest(request)
 
-        return URLSession.shared.dataTaskPublisher(for: request)
-            .tryMap { (data, response) -> Data in
-                guard let httpResponse = response as? HTTPURLResponse else {
-                    throw OpenWeather.APIError.invalidResponse
-                }
-
-                guard httpResponse.statusCode >= 200, httpResponse.statusCode < 300 else {
-                    throw OpenWeather.APIError.unsuccessfulStatusCode(httpResponse.statusCode)
-                }
-
-                return data
-            }
-            .decode(type: OpenWeather.Condition.self, decoder: JSONDecoder())
-            .eraseToAnyPublisher()
     }
 
 //    func currentConditions(forCityIdentifier cityId: String) -> AnyPublisher<OpenWeather.Condition, Error> {
