@@ -40,7 +40,7 @@ struct OpenWeather {
 
 
         // TODO: one APIClient method building from APIRequest (e.g., doIt() above)...? What about handling responses differently?
-        // TODO: use APIRequest instead of URLRequest...?
+        // TODO: use APIRequest instead of URLRequest...? (Only Network code should use URLRequest. Dependent code should not)
         /// current conditions
         func currentConditions(request: URLRequest) -> AnyPublisher<Condition, Error> {
             // https://api.openweathermap.org/data/2.5/weather
