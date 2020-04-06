@@ -1,7 +1,7 @@
+//: [Previous](@previous)
+
 import Foundation
 import PlaygroundSupport
-
-PlaygroundPage.current.needsIndefiniteExecution = true
 
 func fetchBooks(for url: URL, completion: @escaping (Result<[Book], Error>) -> Void) {
     URLSession.shared.dataTask(with: url) { (data, response, error) in
@@ -15,10 +15,13 @@ func fetchBooks(for url: URL, completion: @escaping (Result<[Book], Error>) -> V
                     throw NetworkError.invalidResponse
             }
 
-            return try JSONDecoder().decode([Book].self, from: data)
+            return try JSONDecoder()
+                .decode([Book].self, from: data)
         })
     }.resume()
 }
+
+PlaygroundPage.current.needsIndefiniteExecution = true
 
 let url = URL(string: "https://de-coding-test.s3.amazonaws.com/books.json")!
 fetchBooks(for: url) { (result) in

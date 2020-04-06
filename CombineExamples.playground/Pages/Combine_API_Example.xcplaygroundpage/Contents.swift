@@ -4,8 +4,6 @@ import Combine
 import Foundation
 import PlaygroundSupport
 
-PlaygroundPage.current.needsIndefiniteExecution = true
-
 func fetchBooks(for url: URL) -> AnyPublisher<[Book], Error> {
     return URLSession.shared.dataTaskPublisher(for: url)
         .tryMap { (data, response) in
@@ -19,6 +17,8 @@ func fetchBooks(for url: URL) -> AnyPublisher<[Book], Error> {
         .decode(type: [Book].self, decoder: JSONDecoder())
         .eraseToAnyPublisher()
 }
+
+PlaygroundPage.current.needsIndefiniteExecution = true
 
 let url = URL(string: "https://de-coding-test.s3.amazonaws.com/books.json")!
 let subscriber = fetchBooks(for: url)
