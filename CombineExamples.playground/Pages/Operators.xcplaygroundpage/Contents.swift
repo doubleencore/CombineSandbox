@@ -34,9 +34,6 @@ playgroundShouldContinueIndefinitely()
  
  ## map
  Transforms all elements from the upstream publisher with a provided closure
-
- ### Example
- Transform each value using `map(_:)`
  */
 example("map") {
     _ = [1, 2, 3, 4, 5].publisher
@@ -48,14 +45,11 @@ example("map") {
 
 /*:
  ## filter
- Republishes all elements that match a provided closure
-
- ### Example
- Filter odd values using `filter(_:)`
+ Re-publishes all elements that match a provided closure
  */
 example("filter") {
     _ = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].publisher
-        .filter { $0 % 2 == 0 }
+        .filter { $0 % 2 == 0 } // filter odd values
         .sink { (value) in
             print("received: \(value)")
         }
@@ -66,8 +60,6 @@ example("filter") {
  When chaining operators together, the resulting signature can accumulate all of the types, seen in the
  `crazySignature` function below. Using `eraseToAnyPublisher` erases the type back to
  `AnyPublisher` which provides a cleaner type for external declarations.
-
- ### Example
  */
 example("eraseToAnyPublisher") {
 
@@ -92,7 +84,6 @@ var cancellables = Set<AnyCancellable>()
  ## flatMap
  Transforms all elements from upstream publisher into a new or existing publisher.
 
- ### Example
  Useful for using the result of an upstream publisher to create a new publisher
  */
 example("flatMap") {
@@ -103,11 +94,7 @@ example("flatMap") {
                 .map { $0.data }
                 .decode(type: [Book].self, decoder: JSONDecoder())
         }
-        .sink(receiveCompletion: { completion in
-            print("completed: \(completion)")
-        }, receiveValue: { books in
-            print("books: \(books.count)")
-        })
+        .debug_sink()
         .store(in: &cancellables)
 }
 

@@ -12,7 +12,7 @@ import Combine
  */
 example("Just publisher") {
     _ = Just(99)
-        .sink { (value) in
+        .sink { value in
             print("received value: \(value)")
         }
     // because the `Failure` type for `Just` is `Never` we can use
@@ -87,7 +87,7 @@ example("Empty publisher 2") {
  */
 example("Publishers.Sequence ") {
     _ = [1, 2, 3, 4].publisher
-        .sink { (value) in
+        .sink { value in
             print("received \(value)")
         }
 }
@@ -114,11 +114,7 @@ example("Future") {
 
     print("the Future closure is called before this")
 
-    future.sink(receiveCompletion: { completion in
-        print("received completion: \(completion)")
-    }, receiveValue: { value in
-        print("received value: \(value)")
-    })
+    future.debug_sink() // use custom debug_sink for brevity
 }
 
 /*:
@@ -145,11 +141,7 @@ example("Deferred") {
 
     print("this is called before the Future closure")
 
-    deferred.sink(receiveCompletion: { completion in
-        print("received completion: \(completion)")
-    }, receiveValue: { value in
-        print("received value: \(value)")
-    })
+    deferred.debug_sink()
 }
 
 /*:
@@ -165,11 +157,7 @@ example("Record") {
         recording.receive(completion: .finished)
     }
 
-    _ = recordPublisher.sink(receiveCompletion: { (completion) in
-        print("received completion: \(completion)")
-    }, receiveValue: { value in
-        print("received value: \(value)")
-    })
+    _ = recordPublisher.debug_sink()
 }
 
 /*:
@@ -179,11 +167,7 @@ example("Record") {
  */
 example("Result.Publisher") {
     _ = Result<URL, Error>.Publisher(url)
-        .sink(receiveCompletion: { completion in
-            print("received completion: \(completion)")
-        }, receiveValue: { value in
-            print("received value: \(value)")
-        })
+        .debug_sink()
 
     // can also use Result.publisher
 //    _ = Result<URL, Error> {
@@ -193,11 +177,7 @@ example("Result.Publisher") {
 //            return url
 //        }
 //        .publisher
-//        .sink(receiveCompletion: { completion in
-//            print("received completion: \(completion)")
-//        }, receiveValue: { url in
-//            print("received \(url)")
-//        })
+//        .debug_sink()
 }
 
 /*:

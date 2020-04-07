@@ -19,11 +19,7 @@ example("simple sink example") {
 
     _ = [1, 2, 3, 4]
         .publisher
-        .sink(receiveCompletion: { completion in
-            print("completed: \(completion)")
-        }, receiveValue: { value in
-            print("received: \(value)")
-        })
+        .debug_sink()
 }
 
 /*:
@@ -49,7 +45,7 @@ example("behind the scenes of sink") {
         .subscribe(subscriber)
 
     // and returns a cancellable
-    let cancellable = AnyCancellable(subscriber)
+    _ = AnyCancellable(subscriber)
 }
 
 /*:
@@ -73,7 +69,7 @@ example("behind the scenes of assign") {
         .subscribe(subscriber)
 
     // and returns a cancellable
-    let cancellable = AnyCancellable(subscriber)
+    _ = AnyCancellable(subscriber)
 }
 
 //: [Next](@next)

@@ -28,9 +28,11 @@ func sayHelloPublisher(_ debugPrefix: String) -> AnyPublisher<String, Never> {
 sayHelloPublisher("subscriber 1")
     .sink { _ in } // cancelled before anything is received
 
+
 // retain the cancellable subscriber so it's not cancelled
-let cancellable = sayHelloPublisher("subscriber 2")
+let cancellable1 = sayHelloPublisher("subscriber 2")
     .sink { _ in }
+
 
 // you can also use `.store(in:)` to store cancellables in a collection. This is useful
 // if you have a lot of subscriptions and do not want to add many ivars.
@@ -38,5 +40,11 @@ var cancellables = Set<AnyCancellable>() // or [AnyCancellable]()
 sayHelloPublisher("subscriber 3")
     .sink { _ in }
     .store(in: &cancellables)
+
+
+// cancellation is easy
+let cancellable2 = sayHelloPublisher("subscriber 4")
+    .sink { _ in }
+cancellable2.cancel()
 
 //: [Next](@next)

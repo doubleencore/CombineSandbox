@@ -15,29 +15,13 @@ import Combine
  - Publishers publish values to one or more subscribers
  - Publishers  emit zero or more values until they complete or fail with an error
 
- ### Example 1
- _Publishes_ just one value, then completes. The `Just` publisher never fails, so the `Failure` type is
- already declared as `Never`.
+ ### Example
+ Since nothing ever subscribes to this publisher, nothing is ever emitted
 */
-// since no publisher ever subscribes to this publisher, nothing is ever emitted
 example("Just Publisher with no subscribers") {
-    let publisher = Just("some value")
+    let publisher = Just("some value")  // one of the simplest publishers you can create
 }
 
-/*:
- ### Example 2
- It is important to note that even without a subscriber, some publishers will still execute their supplied code
- even though no values will ever be _received_. To illustrate this, the `print` statement in this example is
- still called, even though nothing subscribes to the publisher. In cases where you only want the supplied
- closures to run upon subscription, use `Deferred`. We'll cover `Future`, `Deferred` and others  in
- [Publishers](Publishers).
- */
-example("Future Publisher with no subscribers") {
-    let publisher = Future<String, Error> { promise in
-        print("this code is still called")
-        promise(.success("value"))
-    }
-}
 /*:
  ----
  ## Subscriber
@@ -52,7 +36,7 @@ example("Future Publisher with no subscribers") {
 
  ### Example 1
  _Subscribes_ to a `Just` publisher, which publishes one value and completes. Uses the `sink` subscriber
- operator to subscribe.
+ to subscribe.
  */
 example("Just Publisher subscribed with sink") {
     let publisher = Just("some value")
@@ -66,7 +50,7 @@ example("Just Publisher subscribed with sink") {
 
 /*:
  ### Example 2
- Uses the `assign` subscriber operator to assign the received value to a property on a given instance.
+ Uses the `assign` subscriber to assign the received value to a property on a given instance.
  */
 example("Just Publisher subscribed with assign") {
     class PropertyHolder {
@@ -84,7 +68,7 @@ example("Just Publisher subscribed with assign") {
 
 /*:
  ### Example 3
- Uses the `assign` subscriber operator to assign multiple received values to a property on a given instance.
+ Uses the `assign` subscriber to assign multiple received values to a property on a given instance.
  */
 example("Publisher.Sequence subscribed with assign") {
     class PropertyHolder {
