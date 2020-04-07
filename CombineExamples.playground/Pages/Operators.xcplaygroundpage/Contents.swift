@@ -5,12 +5,11 @@ import Combine
 
 playgroundShouldContinueIndefinitely()
 
-var cancellables = Set<AnyCancellable>()
-
 /*:
  # Operators
  - Operators take `<Input, Failure>` and emit a new `<Output, Failure>`.
  - They can change either type or the publisher completely.
+ - Operators can be combined as much as needed
 
  ## Types of Operators
  There are dozens of operators and we won't cover them all here. Below is a list of the current types of
@@ -31,6 +30,11 @@ var cancellables = Set<AnyCancellable>()
  - debugging
  - type erasure
 
+ # Some common operators
+ 
+ ## map
+ Transforms all elements from the upstream publisher with a provided closure
+
  ### Example
  Transform each value using `map(_:)`
  */
@@ -43,6 +47,9 @@ example("map") {
 }
 
 /*:
+ ## filter
+ Republishes all elements that match a provided closure
+
  ### Example
  Filter odd values using `filter(_:)`
  */
@@ -55,17 +62,46 @@ example("filter") {
 }
 
 /*:
- ### Example
+ ## eraseToAnyPublisher
+ When chaining operators together, the resulting signature can accumulate all of the types, seen in the
+ `crazySignature` function below. Using `eraseToAnyPublisher` erases the type back to
+ `AnyPublisher` which provides a cleaner type for external declarations.
 
+ ### Example
+ */
+example("eraseToAnyPublisher") {
+
+    func crazySignature() -> Publishers.Decode<Publishers.Map<URLSession.DataTaskPublisher, JSONDecoder.Input>, [Book], JSONDecoder> {
+        return URLSession.shared.dataTaskPublisher(for: url)
+            .map { $0.data }
+            .decode(type: [Book].self, decoder: JSONDecoder())
+    }
+
+    func erasedSignature() -> AnyPublisher<[Book], Error> {
+        return URLSession.shared.dataTaskPublisher(for: url)
+            .map { $0.data }
+            .decode(type: [Book].self, decoder: JSONDecoder())
+            .eraseToAnyPublisher()
+    }
+
+}
+
+var cancellables = Set<AnyCancellable>()
+
+/*:
+ ## flatMap
+ Transforms all elements from upstream publisher into a new or existing publisher.
+
+ ### Example
+ Useful for using the result of an upstream publisher to create a new publisher
  */
 example("flatMap") {
 
-    Just(URL(string: "https://de-coding-test.s3.amazonaws.com/books.json")!)
+    Result<URL, Error>.Publisher(url)
         .flatMap { url in
             return URLSession.shared.dataTaskPublisher(for: url)
                 .map { $0.data }
                 .decode(type: [Book].self, decoder: JSONDecoder())
-                .replaceError(with: [])
         }
         .sink(receiveCompletion: { completion in
             print("completed: \(completion)")
@@ -75,47 +111,4 @@ example("flatMap") {
         .store(in: &cancellables)
 }
 
-//let url = URL(string: "https://de-coding-test.s3.amazonaws.com/books.json")!
-//let books = URLSession.shared.dataTaskPublisher(for: url)
-//    .map { $0.data }
-//    .decode(type: [Book].self, decoder: JSONDecoder())
-//    .replaceError(with: [])
-//    .print()
-//    .makeConnectable()
-//
-//books
-//    .sink(receiveValue: {
-//        print("subscription1 value: \($0.count)")
-//    })
-//    .store(in: &cancellables)
-//
-//books
-//    .sink(receiveValue: {
-//        print("subscription2 value: \($0.count)")
-//    })
-//    .store(in: &cancellables)
-//
-//books.connect()
-//    .store(in: &cancellables)
-
-//let subject = PassthroughSubject<Int, Never>()
-//let numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-//    .publisher
-//    .print()
-//    .multicast(subject: subject)
-//
-//numbers
-//    .sink(receiveValue: {
-//        print("1: \($0)")
-//    })
-//    .store(in: &cancellables)
-//
-//numbers
-//    .sink(receiveValue: {
-//        print("2: \($0)")
-//    })
-//    .store(in: &cancellables)
-//
-//numbers.connect()
-//    .store(in: &cancellables)
 //: [Next](@next)

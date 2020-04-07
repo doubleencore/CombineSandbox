@@ -5,12 +5,10 @@ import Combine
 
 /*:
  # Publishers
- There are several `Publishers` provided by the Combine framework. You should rarely need to create your own.
+ There are several `Publishers` provided by Apple. You should rarely need to create your own.
 
  ## Just
- Just publishers emit only one value and complete.
-
- ### Example
+ Emits only one value and then completes.
  */
 example("Just publisher") {
     _ = Just(99)
@@ -25,8 +23,6 @@ example("Just publisher") {
 /*:
  ## Fail
  Always fails with the supplied error.
-
- ### Example
  */
 example("Fail publisher") {
     _ = Fail<Int, TestError>(error: TestError.test)
@@ -47,9 +43,9 @@ example("Fail publisher") {
  Never sends values or failures and optionally completes.
 
  ### Example 1
+ Completes immediately by default
  */
 example("Empty publisher") {
-    // completes immediately by default
     _ = Empty<Int, Error>()
         .handleEvents(receiveSubscription: { _ in
             print("received subscription")
@@ -68,28 +64,26 @@ example("Empty publisher") {
  Does not complete immediately, so it must be cancelled.
  */
 example("Empty publisher 2") {
-    let subscription = Empty<Int, Error>(completeImmediately: false)
+    let sub = Empty<Int, Error>(completeImmediately: false)
         .handleEvents(receiveSubscription: { _ in
             print("received subscription")
         }, receiveCancel: {
             print("received cancellation")
         })
-        .sink(receiveCompletion: { (completion) in
+        .sink(receiveCompletion: { _ in
             print("never called")
-        }, receiveValue: { value in
+        }, receiveValue: { _ in
             print("never called")
         })
 
     print("never completes, can only be cancelled")
 
-    subscription.cancel()
+    sub.cancel()
 }
 
 /*:
  ## Publishers.Sequence
- Receives values in sequence
-
- ### Example
+ Produces a given sequence of elements, one element at a time
  */
 example("Publishers.Sequence ") {
     _ = [1, 2, 3, 4].publisher
@@ -100,9 +94,7 @@ example("Publishers.Sequence ") {
 
 /*:
  ## Future
-
-
- ### Example
+ Eventually produces a single value and then finishes or fails
  */
 example("Future") {
     let future = Future<String, Error> { promise in
@@ -118,6 +110,7 @@ example("Future") {
             }
         }
     }
+//    .print() // uncomment to see all publisher events
 
     print("the Future closure is called before this")
 
@@ -130,9 +123,7 @@ example("Future") {
 
 /*:
  ## Deferred
-
-
- ### Example
+ Awaits subscription before running the supplied closure to create a new publisher
  */
 example("Deferred") {
     let deferred = Deferred {
@@ -150,6 +141,7 @@ example("Deferred") {
             }
         }
     }
+//    .print() // uncomment to see all publisher events
 
     print("this is called before the Future closure")
 
@@ -162,9 +154,8 @@ example("Deferred") {
 
 /*:
  ## Record
+ Allows recording a series of outputs and a completion, for later playback to each subscriber.
  Similar to `PassthroughSubject`. Can send multiple values through the `Recording` closure.
-
- ### Example
  */
 example("Record") {
 
@@ -175,41 +166,53 @@ example("Record") {
     }
 
     _ = recordPublisher.sink(receiveCompletion: { (completion) in
-        print("received completeion: \(completion)")
+        print("received completion: \(completion)")
     }, receiveValue: { value in
         print("received value: \(value)")
     })
 }
 
 /*:
- ## Result
-
- ### Example
- Using the [Imperative API Example](Imperative_API_Example), but subscribing to the
- Result.publisher instead.
+ ## Result.Publisher
+ Publishes a result then finishes normally, or fails without publishing any elements.
+ This was renamed from Publishers.Once. This is similar to `Just`, but allows for failure.
  */
-example("Result") {
-    let url = URL(string: "https://de-coding-test.s3.amazonaws.com/books.json")!
-    fetchBooks(for: url) { (result) in
-        result
-            .publisher
-            .sink(receiveCompletion: { completion in
-                print("received completion: \(completion)")
-            }, receiveValue: { value in
-                print("received value: \(value.count) books")
-            })
-    }
+example("Result.Publisher") {
+    _ = Result<URL, Error>.Publisher(url)
+        .sink(receiveCompletion: { completion in
+            print("received completion: \(completion)")
+        }, receiveValue: { value in
+            print("received value: \(value)")
+        })
+
+    // can also use Result.publisher
+//    _ = Result<URL, Error> {
+//            guard let url = URL(string: "") else {
+//                throw TestError.test
+//            }
+//            return url
+//        }
+//        .publisher
+//        .sink(receiveCompletion: { completion in
+//            print("received completion: \(completion)")
+//        }, receiveValue: { url in
+//            print("received \(url)")
+//        })
 }
 
 /*:
- Many More!
- - Timer
- - NotificationCenter
- - URLSession
- - KVO
+ ## Many More!
+ - NotificationCenter.Publisher
+ - URLSession.DataTaskPublisher
+ - Optional.Publisher
+ - Scene.Publisher
+ - NSObject.KeyValueObservingPublisher
  - @Published
- - ObservableObject
+ - ObservableObjectPublisher
  - ConnectablePublisher
+    - MakeConnectable
+    - Multicast
+    - Timer.TimerPublisher
  */
 
 //: [Next](@next)

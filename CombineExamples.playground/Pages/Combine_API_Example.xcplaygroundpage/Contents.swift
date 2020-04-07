@@ -20,11 +20,13 @@ func fetchBooks(for url: URL) -> AnyPublisher<[Book], Error> {
 
 PlaygroundPage.current.needsIndefiniteExecution = true
 
-let url = URL(string: "https://de-coding-test.s3.amazonaws.com/books.json")!
-let subscriber = fetchBooks(for: url)
+let publisher = URLSession.shared.dataTaskPublisher(for: url)
+    .map { $0.data }
+    .decode(type: [Book].self, decoder: JSONDecoder())
+
+let subscriber = publisher
     .sink(receiveCompletion: { (completion) in
         print("completed: \(completion)")
-        PlaygroundPage.current.finishExecution()
     }, receiveValue: { (books) in
         print("received books: \(books.count)")
     })

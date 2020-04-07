@@ -1,5 +1,3 @@
-//: [Previous](@previous)
-
 import Foundation
 import PlaygroundSupport
 
@@ -26,7 +24,6 @@ func fetchBooks(for url: URL, completion: @escaping (Result<[Book], Error>) -> V
 
 PlaygroundPage.current.needsIndefiniteExecution = true
 
-let url = URL(string: "https://de-coding-test.s3.amazonaws.com/books.json")!
 fetchBooks(for: url) { (result) in
     switch result {
     case let .success(books):

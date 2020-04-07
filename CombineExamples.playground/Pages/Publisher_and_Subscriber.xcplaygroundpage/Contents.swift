@@ -14,15 +14,13 @@ import Combine
     - `associatedtype Failure: Error`   // type of _error_ published (upon failure)
  - Publishers publish values to one or more subscribers
  - Publishers  emit zero or more values until they complete or fail with an error
-*/
-/*:
+
  ### Example 1
  _Publishes_ just one value, then completes. The `Just` publisher never fails, so the `Failure` type is
  already declared as `Never`.
 */
 // since no publisher ever subscribes to this publisher, nothing is ever emitted
 example("Just Publisher with no subscribers") {
-    // `Failure` for `Just` is `Never`, which means `Output` can be inferred
     let publisher = Just("some value")
 }
 
@@ -51,8 +49,7 @@ example("Future Publisher with no subscribers") {
  - There are currently two built-in subscribers:
     - `sink(receiveCompletion:receiveValue:)`
     - `assign(to:on:)`
- */
-/*:
+
  ### Example 1
  _Subscribes_ to a `Just` publisher, which publishes one value and completes. Uses the `sink` subscriber
  operator to subscribe.
@@ -60,7 +57,7 @@ example("Future Publisher with no subscribers") {
 example("Just Publisher subscribed with sink") {
     let publisher = Just("some value")
 
-    let subscription = publisher.sink(receiveCompletion: { completion in
+    let subscriber = publisher.sink(receiveCompletion: { completion in
         print("completed: \(completion)")
     }, receiveValue: { value in
         print("received value: \(value)")

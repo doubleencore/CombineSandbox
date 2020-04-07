@@ -3,6 +3,18 @@
 import Foundation
 import Combine
 
+/*:
+ # Subscribers
+ There are two `Subscribers` provided by Combine:
+ - Subscribers.Sink
+ - Subscribers.Assign
+
+ ## Sink
+ A subscriber that requests an unlimited number of values upon subscription
+
+ ### Example 1
+ This example uses the `sink(receiveCompletion:receiveValue)` operator that exists on Publisher
+ */
 example("simple sink example") {
 
     _ = [1, 2, 3, 4]
@@ -14,6 +26,10 @@ example("simple sink example") {
         })
 }
 
+/*:
+ ### Example 2
+ This example shows how to manually use `Subscribers.Sink`.
+ */
 example("behind the scenes of sink") {
     // the sink method exists in an extension on Publisher
 
@@ -36,6 +52,14 @@ example("behind the scenes of sink") {
     let cancellable = AnyCancellable(subscriber)
 }
 
+/*:
+ ## Assign
+ A subscriber that assigns received elements to a property indicated by a key path
+
+ ### Example
+ We've already seen how to use `Publisher.assign(to:on)` in [Publisher and Subscriber](Publisher_and_Subscriber).
+ This example shows how to manually use `Subscribers.assign`.
+ */
 example("behind the scenes of assign") {
     // the assign method exists in an extension on Publisher
 
