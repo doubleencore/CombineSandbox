@@ -4,7 +4,8 @@ import Foundation
 import PlaygroundSupport
 
 func fetchBooks(for url: URL, completion: @escaping (Result<[Book], Error>) -> Void) {
-    URLSession.shared.dataTask(with: url) { (data, response, error) in
+    
+    let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
         completion(Result<[Book], Error> {
             guard let data = data else {
                 throw error ?? NetworkError.missingData
@@ -18,7 +19,9 @@ func fetchBooks(for url: URL, completion: @escaping (Result<[Book], Error>) -> V
             return try JSONDecoder()
                 .decode([Book].self, from: data)
         })
-    }.resume()
+    }
+
+    task.resume()
 }
 
 PlaygroundPage.current.needsIndefiniteExecution = true
