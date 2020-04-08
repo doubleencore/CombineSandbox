@@ -17,7 +17,6 @@ example("Just publisher") {
         }
     // because the `Failure` type for `Just` is `Never` we can use
     // `sink(receiveValue:)` instead of `sink(receiveCompletion:receiveValue)`
-    // (completion block is optional)
 }
 
 /*:
