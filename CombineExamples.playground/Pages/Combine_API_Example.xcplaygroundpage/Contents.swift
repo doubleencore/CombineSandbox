@@ -23,17 +23,6 @@ func fetchBooks(for url: URL) -> AnyPublisher<[Book], Error> {
 
 PlaygroundPage.current.needsIndefiniteExecution = true
 
-//let publisher = URLSession.shared.dataTaskPublisher(for: url)
-//    .tryMap { (data, response) in
-//        guard let httpResponse = response as? HTTPURLResponse,
-//            (200..<300).contains(httpResponse.statusCode) else {
-//                throw NetworkError.invalidResponse
-//        }
-//
-//        return data
-//    }
-//    .decode(type: [Book].self, decoder: JSONDecoder())
-
 let subscriber = fetchBooks(for: url)
     .sink(receiveCompletion: { (completion) in
         print("completed: \(completion)")
