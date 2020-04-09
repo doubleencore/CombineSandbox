@@ -3,7 +3,7 @@ import Foundation
 public struct Book {
     public let title: String
     public let author: String?
-    public let imageHref: URL?
+    public let imageURL: URL?
 }
 
 extension Book: Decodable {

@@ -5,6 +5,9 @@ import Foundation
 import PlaygroundSupport
 
 func fetchBooks(for url: URL) -> AnyPublisher<[Book], Error> {
+
+    // Consists of a series of declarations. The details of what's necessary
+    // to fulfill those declarations are abstracted away
     return URLSession.shared.dataTaskPublisher(for: url)
         .tryMap { (data, response) in
             guard let httpResponse = response as? HTTPURLResponse,
@@ -27,6 +30,7 @@ let publisher = URLSession.shared.dataTaskPublisher(for: url)
 let subscriber = publisher
     .sink(receiveCompletion: { (completion) in
         print("completed: \(completion)")
+        PlaygroundPage.current.finishExecution()
     }, receiveValue: { (books) in
         print("received books: \(books.count)")
     })

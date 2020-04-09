@@ -2,11 +2,16 @@ import Foundation
 import PlaygroundSupport
 
 func fetchBooks(for url: URL, completion: @escaping (Result<[Book], Error>) -> Void) {
-    
+
+    // Consists of a series of imperatives, or steps, to be completed
     let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
-        completion(Result<[Book], Error> {
+        let result = Result<[Book], Error> {
+            guard error == nil else {
+                throw error ?? TestError.test
+            }
+
             guard let data = data else {
-                throw error ?? NetworkError.missingData
+                throw NetworkError.missingData
             }
 
             guard let httpResponse = response as? HTTPURLResponse,
@@ -16,7 +21,8 @@ func fetchBooks(for url: URL, completion: @escaping (Result<[Book], Error>) -> V
 
             return try JSONDecoder()
                 .decode([Book].self, from: data)
-        })
+        }
+        completion(result)
     }
 
     task.resume()

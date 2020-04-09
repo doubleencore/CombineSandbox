@@ -12,5 +12,6 @@
         <page name='Combining_Operators'/>
         <page name='Scheduler_and_Thread_Handling'/>
         <page name='Connectable_Operators'/>
+        <page name='Try_it_Yourself'/>
     </pages>
 </playground>
